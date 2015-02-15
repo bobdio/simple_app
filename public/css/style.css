@@ -1,0 +1,40 @@
+body {
+  background-color: #eee;
+}
+
+.form-signin {
+  width: 220px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+
+.thumbnail-list {
+  list-style:none;
+  margin:0;
+  padding:0;
+  font-size:0;
+}
+.thumbnail-list li {
+  display:inline-block;
+  vertical-align:top;
+  width:25%;
+  padding:2%;
+  font-size:12px;
+}
+.thumbnail-list img {
+  display:block;
+  width:100%;
+}
+.item { background:green; }
+.cut-price {
+  text-decoration:line-through;
+  color:#ccc;
+}
+.product-price {
+  float:left;
+  width:100%;
+  color:#999;
+}
+.btn-slide { display:none; }
+

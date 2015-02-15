@@ -1,0 +1,10 @@
+<h3> New product</h3>
+
+<form action="<%= url("/products") %>" class="form-horizontal well" method="post">
+  <%= erb :'products/_form_fields' %>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn btn-success">Create product</button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,13 @@
+<h3> New product</h3>
+
+<form action="<%= url("/products/#{@product.id}") %>" class="form-horizontal well" method="post">
+  <input name="_method" value="PATCH" type="hidden"/>
+
+  <%= erb :'products/_form_fields', locals: {product: @product} %>
+
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn btn-success">Update product</button>
+    </div>
+  </div>
+</form>

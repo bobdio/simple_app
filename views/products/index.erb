@@ -1,0 +1,27 @@
+<h2> Products </h2>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th class="span3">Name</th>
+      <th class="span2">Price</th>
+      <th>Description</th>
+      <th colspan="2" class="span2"> Actions</th>
+    </tr>
+  </thead>
+  <% @products.each do |product| %>
+    <tr>
+      <td><%= product.name %></td>
+      <td><%= product.price %></td>
+      <td><%= product.description %></td>
+      <td class="span1"><a href="<%= url("/products/#{product.id}/edit") %>" class="btn btn-small btn-success">Edit</td>
+      <td class="span1">
+        <form action="<%= url("/products/#{product.id}") %>" method="post" onsubmit = "return confirm('Are you sure?')">
+          <input name="_method" value="delete" type="hidden"/>
+          <button type="submit" class="btn btn-small btn-warning">Delete</button>
+        <form/>
+    </tr>
+  <% end %>
+</table>
+
+<a href="/products/new" class="btn btn-success">Add product</a>

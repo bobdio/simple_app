@@ -1,0 +1,16 @@
+<form action="<%= url("/login")%>" method="post" class="form-signin">
+  <h2 class="form-signin-heading">Please sign in</h2>
+  <div class="control-group">
+    <label for="input_email">Email address*</label>
+    <input type="email" name="email" id="input_email" class="form-control" required autofocus />
+  </div>
+  <div class="control-group">
+    <label for="input_password">Password*</label>
+    <input type="password" name="password" id="input_password" class="form-control" required />
+  </div>
+  <div class="control-group">
+    You don't have an account?
+    <a href="<%= url("/registration")%>"> Registr </a>
+  </div>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+</form>

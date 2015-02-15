@@ -1,0 +1,33 @@
+<% regexp = "([0-9]+[.|,][0-9])|([0-9][.|,][0-9]+)|([0-9]+)" %>
+
+<div class="control-group">
+  <label for="product_name" class="control-label">Name*</label>
+  <div class="controls">
+    <input type="text" id="product_name" name="product[name]" class="form-control" value="<%= product.name if defined?(product) %>" required="required" />
+  </div>
+</div>
+<div class="control-group">
+  <label for="product_price" class="control-label">Price*</label>
+  <div class="controls">
+    <input type="text" id="product_price" name="product[price]" class="form-control" value="<%= product.price if defined?(product) %>" required="required" pattern="<%= regexp %>" />
+  </div>
+</div>
+<div class="control-group">
+  <label for="product_status" class="control-label">Status*</label>
+  <div class="radio controls">
+    <label>
+      <input type="radio" name="product[status]" id="blankRadio1" value="1" <%= if defined?(product) then if  product.status  then 'checked="checked"' end; else  'checked="checked"' end  %> />
+      Enabled
+    </label>
+    <label>
+      <input type="radio" name="product[status]" id="blankRadio1" value="0" <%=  'checked="checked"'  if (defined?(product) && product.status == false) %> />
+      Disabled
+    </label>
+</div>
+</div>
+<div class="control-group">
+<label for="product_description" class="control-label">Description*</label>
+  <div class="controls">
+    <textarea id="product_description" name="product[description]" required="required"><%= product.description if defined?(product) %></textarea>
+  </div>
+</div>
