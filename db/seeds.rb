@@ -10,3 +10,14 @@ Product.delete_all
     }
   )
 end
+
+Customer.delete_all
+Customer.create(
+  {
+    firstname: "Tester",
+    lastname: "Customer",
+    email: "test@email.com",
+    password: "1234567",
+    password_confirmation: "1234567"
+  }
+)

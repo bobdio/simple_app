@@ -33,13 +33,13 @@ class SimpleApp < Sinatra::Base
 
   get '/admin' do
     protected!
-    @products = Product.paginate(:page => params[:page], :per_page => 5)
+    @products = Product.paginate(:page => params[:page], :per_page => 10)
     erb :'products/index', layout: :admin_layout
   end
 
   get '/admin/products' do
     protected!
-    @products = Product.paginate(:page => params[:page], :per_page => 5)
+    @products = Product.paginate(:page => params[:page], :per_page => 10)
     erb :'products/index', layout: :admin_layout
   end
 
@@ -98,7 +98,7 @@ class SimpleApp < Sinatra::Base
   end
 
   get '/products' do
-    @products = Product.paginate(:page => params[:page], :per_page => 5)
+    @products = Product.paginate(:page => params[:page], :per_page => 9)
     erb :products
   end
 
@@ -110,7 +110,7 @@ class SimpleApp < Sinatra::Base
   get '/login' do
     if @current_user
       flash.now[:info] = "You are already logged in"
-      @products = Product.paginate(:page => params[:page], :per_page => 5)
+      @products = Product.paginate(:page => params[:page], :per_page => 9)
       erb :products
     else
       erb :login
@@ -119,13 +119,17 @@ class SimpleApp < Sinatra::Base
 
   post '/login' do
     customer = Customer.find_by(email: params[:email])
-    current_user = customer.authenticate(params[:password])
+    if customer
+      current_user = customer.authenticate(params[:password])
+    else
+      current_user = nil
+    end
 
     if current_user
       flash.now[:info] = "You are logged in successfully"
       session[:current_user] = current_user
 
-      @products = Product.paginate(:page => params[:page], :per_page => 5)
+      @products = Product.paginate(:page => params[:page], :per_page => 9)
       erb :products
     else
       flash.now[:error] = "Email or password is not correct!"
@@ -153,7 +157,7 @@ class SimpleApp < Sinatra::Base
 
   get '/orders' do
     if @current_user
-      @orders = @current_user.orders.order('id desc').paginate(:page => params[:page], :per_page => 5)
+      @orders = @current_user.orders.order('id desc').paginate(:page => params[:page], :per_page => 10)
       erb :orders
     else
       flash.now[:error] = "You should be logged in"
