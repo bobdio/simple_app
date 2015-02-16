@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 20150215202314) do
     t.string   "firstname",       limit: 255
     t.string   "lastname",        limit: 255
     t.string   "email",           limit: 255
-    t.string   "password_digest", limit: 100
+    t.string   "password_digest", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -37,6 +37,8 @@ ActiveRecord::Schema.define(version: 20150215202314) do
     t.integer  "customer_id", limit: 4
     t.decimal  "total",                  precision: 10, scale: 4
     t.date     "date"
+    t.string   "status",      limit: 10
+    t.string   "token",       limit: 32
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -14,6 +14,8 @@ class SimpleApp < Sinatra::Base
   register Sinatra::Flash
   register WillPaginate::Sinatra
 
+  set :environment, :development
+
   before do
     @current_user = session[:current_user] rescue nil
   end
