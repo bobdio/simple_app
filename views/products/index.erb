@@ -14,14 +14,16 @@
       <td><%= product.name %></td>
       <td><%= product.price %></td>
       <td><%= product.description %></td>
-      <td class="span1"><a href="<%= url("/products/#{product.id}/edit") %>" class="btn btn-small btn-success">Edit</td>
+      <td class="span1"><a href="<%= url("/admin/products/#{product.id}/edit") %>" class="btn btn-small btn-success">Edit</td>
       <td class="span1">
-        <form action="<%= url("/products/#{product.id}") %>" method="post" onsubmit = "return confirm('Are you sure?')">
-          <input name="_method" value="delete" type="hidden"/>
+        <form action="<%= url("/admin/products/#{product.id}/delete") %>" method="post" onsubmit = "return confirm('Are you sure?')">
           <button type="submit" class="btn btn-small btn-warning">Delete</button>
         <form/>
     </tr>
   <% end %>
 </table>
+<a href="/admin/products/new" class="btn btn-success">Add product</a>
 
-<a href="/products/new" class="btn btn-success">Add product</a>
+<div class="text-center">
+  <%= will_paginate @products %>
+</div>

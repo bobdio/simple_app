@@ -13,3 +13,7 @@ gem 'byebug'
 gem 'bcrypt'
 
 gem 'will_paginate', '~> 3.0.6'
+
+gem 'rest-client'
+
+gem 'json'

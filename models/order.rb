@@ -13,7 +13,7 @@ class Order < ActiveRecord::Base
     self.save
   end
 
-  def self.create_order(current_user, products)
+  def self.create_order(current_user, products, token)
     prices = Product.select(:id, :price).where(id: products.values.map{|e| e["id"].to_i})
     prices = Hash[prices.map{|row| [row.id.to_s, row.price]}]
 
@@ -21,7 +21,8 @@ class Order < ActiveRecord::Base
       {
         total: products.map{|k, v| prices[v["id"]] * v["qty"].to_i}.inject(:+),
         date: Time.now.strftime("%Y-%m-%d"),
-        status: 'process'
+        status: 'process',
+        token: token
       }
     )
     order.order_lines = products.map do |k, v|
@@ -36,6 +37,8 @@ class Order < ActiveRecord::Base
     end
 
     order.save
+
+    order
   end
 
 end

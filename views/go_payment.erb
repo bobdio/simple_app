@@ -1,0 +1,12 @@
+<p>You will be redirected to payment service in 5 seconds</p>
+<form id="payment-form" action="http://localhost:1234/payment" method="post">
+  <input type="hidden" name="order[order_no]" value="<%= @order.order_no %>" />
+  <input type="hidden" name="order[price]" value="<%= @order.total %>" />
+  <input type="hidden" name="order[back_url]" value="<%= url('/payment/status') %>" />
+  <input type="hidden" name="token" value="<%= @token %>">
+</form>
+<script>
+  $(document).ready(function(){
+    $("#payment-form").submit();
+  });
+</script>

@@ -1,6 +1,6 @@
 <h3> New product</h3>
 
-<form action="<%= url("/products/#{@product.id}") %>" class="form-horizontal well" method="post">
+<form action="<%= url("/admin/products/#{@product.id}") %>" class="form-horizontal well" method="post">
   <input name="_method" value="PATCH" type="hidden"/>
 
   <%= erb :'products/_form_fields', locals: {product: @product} %>

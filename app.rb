@@ -4,10 +4,13 @@ require 'sinatra/flash'
 require 'byebug'
 require 'will_paginate'
 require 'will_paginate/active_record'
+require 'rest_client'
+require 'json'
+
 
 class SimpleApp < Sinatra::Base
-  # use Rack::Session::Pool, :expire_after => 2592000
-  enable :sessions
+  use Rack::Session::Pool, :expire_after => 2592000
+  # enable :sessions
   register Sinatra::Flash
   register WillPaginate::Sinatra
 
@@ -15,7 +18,76 @@ class SimpleApp < Sinatra::Base
     @current_user = session[:current_user] rescue nil
   end
 
-  get '/' do
+  helpers do
+    def protected!
+      return if authorized?
+      headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
+      halt 401, "Not authorized\n"
+    end
+
+    def authorized?
+      @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+      @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['admin', 'admin']
+    end
+  end
+
+  get '/admin' do
+    protected!
+    @products = Product.paginate(:page => params[:page], :per_page => 5)
+    erb :'products/index', layout: :admin_layout
+  end
+
+  get '/admin/products' do
+    protected!
+    @products = Product.paginate(:page => params[:page], :per_page => 5)
+    erb :'products/index', layout: :admin_layout
+  end
+
+  get '/admin/products/new' do
+    protected!
+
+    erb :'products/new', layout: :admin_layout
+  end
+
+  post '/admin/products' do
+    protected!
+
+    product = Product.new params[:product]
+
+    if product.save
+      redirect to('/admin/products')
+    else
+      redirect back
+    end
+  end
+
+  get '/admin/products/:id/edit' do
+    protected!
+
+    @product = Product.find params[:id].to_i
+
+    erb :'products/edit', layout: :admin_layout
+  end
+
+  post '/admin/products/:id' do
+    protected!
+
+    product = Product.find params[:id].to_i
+    product.update_attributes(params[:product])
+
+    redirect to('/admin/products')
+  end
+
+  post '/admin/products/:id/delete' do
+    protected!
+
+    product = Product.find params[:id].to_i
+    product.destroy
+
+    redirect to('/admin/products')
+  end
+
+   get '/' do
     @products = Product.all.limit(3)
     erb :home
   end
@@ -30,39 +102,6 @@ class SimpleApp < Sinatra::Base
     erb :products
   end
 
-  get '/products/new' do
-    erb :'products/new'
-  end
-
-  post '/products' do
-    product = Product.new params[:product]
-
-    if product.save
-      redirect to('/products')
-    else
-      redirect back
-    end
-  end
-
-  get '/products/:id/edit' do
-    @product = Product.find params[:id].to_i
-
-    erb :'products/edit'
-  end
-
-  patch '/products/:id' do
-    product = Product.find params[:id].to_i
-    product.update_attributes(params[:product])
-
-    redirect to('/products')
-  end
-
-  delete '/products/:id' do
-    product = Product.find params[:id].to_i
-    product.destroy
-
-    redirect to('/products')
-  end
 
   get '/registration' do
     erb :registration
@@ -162,12 +201,39 @@ class SimpleApp < Sinatra::Base
 
   post '/checkout' do
     if @current_user
-      Order.create_order(@current_user, params[:products])
+      @token = (('a'..'z').to_a + (0..9).to_a).shuffle.take(32).join
+      @order =  Order.create_order(@current_user, params[:products], @token)
+      session[:cart] = {}
 
-      session.delete(:cart)
+      erb :go_payment
     else
       flash.now[:error] = "You should be logged in"
+
       erb :login
+    end
+  end
+
+  post '/payment/status' do
+    if params[:token]
+      order = Order.find_by(order_no: params[:order_no])
+      if params[:token] == order.token
+        if params[:status] == "paid"
+          order.status = "paid"
+          order.save
+
+          flash.now[:info] = "Payment was successful"
+        else
+          flash.now[:info] = "Payment wasn't successful"
+        end
+      else
+        "Unauthorized access"
+      end
+
+      @products = {}
+
+      erb :cart
+    else
+      "Unauthorized access"
     end
   end
 

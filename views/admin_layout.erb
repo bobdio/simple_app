@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Test Api</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery.js"></script>
+</head>
+<body>
+  <div class="container">
+      <div class="row">
+        <%= erb :admin_navs %>
+      </div>
+      <div><%= styled_flash %></div>
+
+      <%= yield %>
+      <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  </div>
+</body>
+<footer class=""></footer>
+</html>
