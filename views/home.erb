@@ -1,1 +1,23 @@
-<h2>Welcome to simple e-comerce app :)</h2>
+<div class="row">
+  <div class="col-sm-4 col-md-3">
+      <div id="panel" class="">
+          <div class="well">
+               <h2 class="">Welcome to simple e-comerce app</h2>
+
+              <p class="">Lorem ipsum dolor sit amet, ex per delenit legendos suavitate, duo ex
+                  labores expetenda. Malis electram pro ea, eu epicuri honestatis qui, idque
+                  nulla recusabo ut usu. No his dicit pertinax dissentias, has ea labores
+                  blandit, solum semper inimicus at mel. Ne justo quaestio usu. Cu cum quot
+                  dicat bonorum, summo voluptatum qui an.</p>
+          </div>
+      </div>
+  </div>
+  <h3>Most popular products</h3>
+  <div class="col-sm-8 col-md-9">
+      <ul class="thumbnail-list">
+          <% @products.each do |product| %>
+              <%= erb :product_item, locals: {product: product}%>
+          <% end %>
+      </ul>
+  </div>
+</div>

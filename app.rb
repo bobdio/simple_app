@@ -2,18 +2,31 @@ require "sinatra"
 require 'sinatra/activerecord'
 require 'sinatra/flash'
 require 'byebug'
+require 'will_paginate'
+require 'will_paginate/active_record'
 
 class SimpleApp < Sinatra::Base
   # use Rack::Session::Pool, :expire_after => 2592000
   enable :sessions
   register Sinatra::Flash
+  register WillPaginate::Sinatra
+
+  before do
+    @current_user = session[:current_user] rescue nil
+  end
+
+  get '/' do
+    @products = Product.all.limit(3)
+    erb :home
+  end
 
   get '/home' do
+    @products = Product.all.limit(3)
     erb :home
   end
 
   get '/products' do
-    @products = Product.all
+    @products = Product.paginate(:page => params[:page], :per_page => 5)
     erb :products
   end
 
@@ -56,10 +69,10 @@ class SimpleApp < Sinatra::Base
   end
 
   get '/login' do
-    if session.has_key?(:current_user)
+    if @current_user
       flash.now[:info] = "You are already logged in"
-      @products = Product.all
-      erb :'products/index'
+      @products = Product.paginate(:page => params[:page], :per_page => 5)
+      erb :products
     else
       erb :login
     end
@@ -73,8 +86,8 @@ class SimpleApp < Sinatra::Base
       flash.now[:info] = "You are logged in successfully"
       session[:current_user] = current_user
 
-      @products = Product.all
-      erb :'products/index'
+      @products = Product.paginate(:page => params[:page], :per_page => 5)
+      erb :products
     else
       flash.now[:error] = "Email or password is not correct!"
       erb :login
@@ -100,7 +113,8 @@ class SimpleApp < Sinatra::Base
   end
 
   get '/orders' do
-    if session.has_key?(:current_user)
+    if @current_user
+      @orders = @current_user.orders.order('id desc').paginate(:page => params[:page], :per_page => 5)
       erb :orders
     else
       flash.now[:error] = "You should be logged in"
@@ -108,6 +122,54 @@ class SimpleApp < Sinatra::Base
     end
   end
 
+  get '/order_items/:id' do
+    if @current_user
+      @order_items = OrderLine.where(order_id: params[:id].to_i).order('id desc')
+      erb :order_items
+    else
+      flash.now[:error] = "You should be logged in"
+      erb :login
+    end
+  end
+
+  get '/cart' do
+    if session.has_key?(:cart) && session[:cart].size > 0
+      @cart = session[:cart]
+      @products = Product.where(id: session[:cart].keys.map(&:to_i))
+    else
+      @products = []
+    end
+    erb :cart
+  end
+
+  post '/cart' do
+    session[:cart] ||= {}
+    session[:cart][params[:id]] = session[:cart].has_key?(params[:id]) ? session[:cart][params[:id]].to_i + 1 : 1
+    flash[:info] = "Product added to cart"
+    redirect to('/products')
+  end
+
+  post '/cart.json' do
+    content_type :json
+    session[:cart][params[:id]] = params[:qty]
+    "{status: 'ok'}"
+  end
+
+  get '/cart/:id' do
+    session[:cart].delete params[:id].to_s
+    redirect to('/cart')
+  end
+
+  post '/checkout' do
+    if @current_user
+      Order.create_order(@current_user, params[:products])
+
+      session.delete(:cart)
+    else
+      flash.now[:error] = "You should be logged in"
+      erb :login
+    end
+  end
 
 end
 

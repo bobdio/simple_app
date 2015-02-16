@@ -1,1 +1,26 @@
-Hi from orders)
+<% if @orders.size > 0%>
+<h2> Orders </h2>
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th class="span2">Order number </th>
+      <th class="span2"> Total price</th>
+      <th class="span2">Date</th>
+      <th class="span2">Status</th>
+    </tr>
+  </thead>
+  <% @orders.each do |order| %>
+    <tr>
+      <td><a href="<%= url("order_items/#{order.id}")%>"><%= order.order_no %></a></td>
+      <td><%= order.total %></td>
+      <td><%= order.date %></td>
+      <td><%= order.status%></td>
+    </tr>
+  <% end %>
+</table>
+<div class="text-center">
+        <%= will_paginate @orders %>
+    </div>
+<% else %>
+  <h2>You do not have any orders</h2>
+<% end %>

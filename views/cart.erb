@@ -1,0 +1,62 @@
+<% if @products.size > 0 %>
+  <h2> Products in cart </h2>
+  <form method="post" action="<%= url("/checkout")%>">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th class="span3">Name</th>
+          <th class="span2">Price</th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <% total = 0 %>
+      <% @products.each_with_index do |product, index| %>
+        <tr>
+          <td><%= product.name %></td>
+          <td><%= product.price %></td>
+          <td><%= product.description %></td>
+          <td class="span1">
+            <input type="hidden" name="products[<%= index%>][id]" value="<%= product.id %>"/>
+            <input type="hidden" name="products[<%= index%>][price]" value="<%= product.price %>" />
+            <input type="number" name="products[<%= index%>][qty]" min="1" max="100" step="1" value="<%= @cart[product.id.to_s]%>" />
+          </td>
+          <td class="span1">
+            <a href="<%= url("/cart/#{product.id}") %>" class="btn btn-small btn-warning" onclick = "return confirm('Are you sure?')">
+              Delete
+            </a>
+        </tr>
+        <% total += product.price %>
+      <% end %>
+      <tr>
+        <th colspan="5" class="total">
+          Total: <span id="total_price"><%= total %></span> $
+        </th>
+      </tr>
+    </table>
+    <div class="row text-right">
+      <% if @current_user %>
+          <button type="submit" class="btn btn-success"> Checkout</button>
+        <% else %>
+          <p class="text-warning">To make an order, please <a href="<%= url("/login")%>">sign in</a></p>
+        <% end %>
+    </div>
+  </form>
+<% else %>
+  <h2> Cart is empty</h2>
+<% end %>
+<script >
+    $(document).ready(function(){
+        $("input[type=number]").change(function(){
+            var total = 0;
+            $("input[type=number]").each(function(e){
+              total += $(this).val() * $(this).prev().val();
+
+              //change qty in session[:cart]
+              $.post("<%= url('/cart.json')%>", { id: $(this).prev().prev().val(), qty: $(this).val() })
+            });
+            $("#total_price").text(total.toFixed(2));
+        })
+    });
+</script>

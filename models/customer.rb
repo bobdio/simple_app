@@ -7,4 +7,6 @@ class Customer < ActiveRecord::Base
 
   has_secure_password
   validates :password, length: { minimum: 7 }
+
+  has_many :orders
 end

@@ -1,0 +1,23 @@
+<% if @order_items.size > 0%>
+  <h2> Orders items </h2>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="span2">Product name </th>
+        <th class="span2"> Price</th>
+        <th class="span2">Quantity</th>
+        <th class="span2">Total price</th>
+      </tr>
+    </thead>
+    <% @order_items.each do |item| %>
+      <tr>
+        <td><%= item.id %></td>
+        <td><%= item.unit_price %></td>
+        <td><%= item.qty %></td>
+        <td><%= item.total_price%></td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <h2>You do not have any orders</h2>
+<% end %>
