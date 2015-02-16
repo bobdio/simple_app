@@ -10,7 +10,6 @@ require 'json'
 
 class SimpleApp < Sinatra::Base
   use Rack::Session::Pool, :expire_after => 2592000
-  # enable :sessions
   register Sinatra::Flash
   register WillPaginate::Sinatra
 
